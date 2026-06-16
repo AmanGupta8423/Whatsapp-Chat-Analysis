@@ -11,7 +11,6 @@ uploaded_file = st.sidebar.file_uploader("Choose a file")
 if uploaded_file is not None:
     bytes_data = uploaded_file.getvalue()
     data = bytes_data.decode('utf-8')
-    
     df = preprocessor.preprocess(data)
     
 
@@ -22,9 +21,18 @@ if uploaded_file is not None:
     selected_user = st.sidebar.selectbox('Show Analysis With Respect To',user_list)
     st.title('Messages')
     if selected_user == 'All':
-        st.dataframe(df)
+        st.dataframe(df[['user','message','date']])
     else:
-        st.dataframe(df[df['user'] == selected_user])
+        st.dataframe(df[df['user'] == selected_user][['user','message','date']])
+
+    st.title('Links Shared')
+    link_df = helper.filter_link(selected_user, df)
+    st.dataframe(
+        link_df,
+        column_config={
+            "Link": st.column_config.LinkColumn("Link")
+        }
+    )
 
     if st.sidebar.button('Analyse'):
         col1,col2 = st.columns(2)

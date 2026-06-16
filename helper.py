@@ -110,3 +110,15 @@ def hourly_participation(selected_user,df):
         df = df[df['user'] == selected_user]
     activity_heat_map = df.pivot_table(index ='day_name',columns='period',values='message',aggfunc='count').fillna(0)
     return activity_heat_map
+
+def filter_link(selected_user, df):
+    if selected_user != 'All':
+        df = df[df['user'] == selected_user]
+
+    data = []
+
+    for user, message in zip(df['user'], df['message']):
+        for url in extract.find_urls(message):
+            data.append([user, url])
+
+    return pd.DataFrame(data, columns=['User', 'Link'])
